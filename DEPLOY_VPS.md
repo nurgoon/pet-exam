@@ -145,3 +145,33 @@ cp backend/db.sqlite3 backup_$(date +%F_%H-%M).sqlite3
 - для HTTPS используй certbot/caddy/traefik
 
 Тогда все проекты живут параллельно на одном сервере и не мешают друг другу.
+
+### Пример: поддомен без порта в URL
+
+Нужно, чтобы пользователи открывали просто `https://exam.example.com` (без `:18080`):
+
+1. В `.env.docker` оставь:
+   - `APP_BIND_IP=127.0.0.1`
+   - `APP_PORT=18080` (любой свободный внутренний порт)
+2. На хосте настрой внешний Nginx:
+
+```nginx
+server {
+    listen 80;
+    server_name exam.example.com;
+
+    location / {
+        proxy_pass http://127.0.0.1:18080;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+```
+
+3. После этого добавь HTTPS (certbot/caddy/traefik).
+
+Важно:
+- `5173` — это только dev-порт Vite для локальной разработки.
+- Для коллег используй URL домена, который смотрит на reverse proxy.
