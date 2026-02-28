@@ -6,20 +6,20 @@ $envExample = '.env.docker.example'
 $composeEnvFile = '.env'
 
 if (-not (Get-Command docker -ErrorAction SilentlyContinue)) {
-  throw 'docker не найден. Установите Docker Desktop и повторите.'
+  throw 'docker is not installed. Please install Docker Desktop first.'
 }
 
 if (-not (Test-Path $envFile)) {
   if (-not (Test-Path $envExample)) {
-    throw "Не найден $envExample"
+    throw "Missing $envExample"
   }
   Copy-Item $envExample $envFile
-  Write-Host "Создан $envFile из шаблона $envExample"
+  Write-Host "Created $envFile from $envExample"
 }
 
 $composeVersion = docker compose version 2>$null
 if (-not $composeVersion) {
-  throw 'docker compose plugin не найден.'
+  throw 'docker compose plugin is not installed.'
 }
 
 $envMap = @{}
@@ -34,32 +34,15 @@ Get-Content $envFile | ForEach-Object {
 
 $appBindIp = if ($envMap.ContainsKey('APP_BIND_IP') -and $envMap['APP_BIND_IP']) { $envMap['APP_BIND_IP'] } else { '127.0.0.1' }
 $appPort = if ($envMap.ContainsKey('APP_PORT') -and $envMap['APP_PORT']) { $envMap['APP_PORT'] } else { '18080' }
-$domain = if ($envMap.ContainsKey('DOMAIN')) { $envMap['DOMAIN'] } else { '' }
-$email = if ($envMap.ContainsKey('LETSENCRYPT_EMAIL')) { $envMap['LETSENCRYPT_EMAIL'] } else { '' }
 
 @(
   "APP_BIND_IP=$appBindIp"
   "APP_PORT=$appPort"
-  "DOMAIN=$domain"
-  "LETSENCRYPT_EMAIL=$email"
 ) | Set-Content -Path $composeEnvFile -Encoding UTF8
 
-if ($domain) {
-  if (-not $email) {
-    throw "Для автоматического HTTPS укажите LETSENCRYPT_EMAIL в $envFile"
-  }
-
-  Write-Host "Запуск контейнеров с HTTPS (Let's Encrypt) для домена: $domain"
-  docker compose --env-file $envFile -p $projectName --profile https up -d --build
-  Write-Host 'Готово.'
-  Write-Host "Сайт: https://$domain"
-  Write-Host "Админка: https://$domain/admin/"
-  exit 0
-}
-
-Write-Host "Запуск контейнеров (project: $projectName)..."
+Write-Host "Starting containers (project: $projectName)..."
 docker compose --env-file $envFile -p $projectName up -d --build
 
-Write-Host 'Готово.'
-Write-Host "Приложение: http://$appBindIp:$appPort"
-Write-Host "Админка: http://$appBindIp:$appPort/admin/"
+Write-Host 'Done.'
+Write-Host "Application: http://$appBindIp:$appPort"
+Write-Host "Admin: http://$appBindIp:$appPort/admin/"

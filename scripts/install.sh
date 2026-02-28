@@ -7,25 +7,24 @@ ENV_EXAMPLE=.env.docker.example
 COMPOSE_ENV_FILE=.env
 
 if ! command -v docker >/dev/null 2>&1; then
-  echo "docker не найден. Установите Docker и повторите." >&2
+  echo "docker is not installed. Please install Docker first." >&2
+  exit 1
+fi
+
+if ! docker compose version >/dev/null 2>&1; then
+  echo "docker compose plugin is not installed." >&2
   exit 1
 fi
 
 if [ ! -f "$ENV_FILE" ]; then
   if [ ! -f "$ENV_EXAMPLE" ]; then
-    echo "Не найден $ENV_EXAMPLE" >&2
+    echo "Missing $ENV_EXAMPLE" >&2
     exit 1
   fi
   cp "$ENV_EXAMPLE" "$ENV_FILE"
-  echo "Создан $ENV_FILE из шаблона $ENV_EXAMPLE"
+  echo "Created $ENV_FILE from $ENV_EXAMPLE"
 fi
 
-if ! docker compose version >/dev/null 2>&1; then
-  echo "docker compose plugin не найден. Установите docker compose plugin." >&2
-  exit 1
-fi
-
-# Load deployment vars from .env.docker
 set -a
 . "./$ENV_FILE"
 set +a
@@ -35,35 +34,25 @@ APP_PORT=${APP_PORT:-18080}
 DOMAIN=${DOMAIN:-}
 LETSENCRYPT_EMAIL=${LETSENCRYPT_EMAIL:-}
 
-# Compose reads substitutions from .env, not from service env_file
 cat > "$COMPOSE_ENV_FILE" <<EOF
 APP_BIND_IP=$APP_BIND_IP
 APP_PORT=$APP_PORT
-DOMAIN=$DOMAIN
-LETSENCRYPT_EMAIL=$LETSENCRYPT_EMAIL
 EOF
 
-COMPOSE_ARGS="--env-file $ENV_FILE -p $PROJECT_NAME"
+echo "Starting containers (project: $PROJECT_NAME)..."
+docker compose --env-file "$ENV_FILE" -p "$PROJECT_NAME" up -d --build
 
-if [ -n "$DOMAIN" ]; then
-  if [ -z "$LETSENCRYPT_EMAIL" ]; then
-    echo "Для автоматического HTTPS укажите LETSENCRYPT_EMAIL в $ENV_FILE" >&2
+echo "Application: http://$APP_BIND_IP:$APP_PORT"
+echo "Admin: http://$APP_BIND_IP:$APP_PORT/admin/"
+
+if [ -n "$DOMAIN" ] || [ -n "$LETSENCRYPT_EMAIL" ]; then
+  if [ -z "$DOMAIN" ] || [ -z "$LETSENCRYPT_EMAIL" ]; then
+    echo "DOMAIN and LETSENCRYPT_EMAIL must both be set for automatic SSL." >&2
     exit 1
   fi
 
-  echo "Запуск контейнеров с HTTPS (Let's Encrypt) для домена: $DOMAIN"
-  # shellcheck disable=SC2086
-  docker compose $COMPOSE_ARGS --profile https up -d --build
-  echo "Готово."
-  echo "Сайт: https://$DOMAIN"
-  echo "Админка: https://$DOMAIN/admin/"
-  exit 0
+  echo "Configuring HTTPS for $DOMAIN..."
+  sh scripts/setup_ssl_nginx.sh "$DOMAIN" "$LETSENCRYPT_EMAIL" "$APP_PORT"
+  echo "HTTPS enabled: https://$DOMAIN"
+  echo "Admin: https://$DOMAIN/admin/"
 fi
-
-echo "Запуск контейнеров (project: $PROJECT_NAME)..."
-# shellcheck disable=SC2086
-docker compose $COMPOSE_ARGS up -d --build
-
-echo "Готово."
-echo "Приложение: http://$APP_BIND_IP:$APP_PORT"
-echo "Админка: http://$APP_BIND_IP:$APP_PORT/admin/"

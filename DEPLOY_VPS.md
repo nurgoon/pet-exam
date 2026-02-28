@@ -78,8 +78,8 @@ sh scripts/install.sh
 
 Что делает `install.sh`:
 - создает `.env.docker` из шаблона при первом запуске
-- синхронизирует переменные `APP_BIND_IP/APP_PORT/DOMAIN/LETSENCRYPT_EMAIL` в `.env` для `docker compose`
-- при наличии `DOMAIN` + `LETSENCRYPT_EMAIL` включает профиль `https` (Caddy + Let's Encrypt)
+- синхронизирует переменные `APP_BIND_IP/APP_PORT` в `.env` для `docker compose`
+- при наличии `DOMAIN` + `LETSENCRYPT_EMAIL` автоматически настраивает host nginx + certbot
 
 One-liner вариант (`curl | sh`):
 
@@ -152,8 +152,9 @@ cp backend/db.sqlite3 backup_$(date +%F_%H-%M).sqlite3
 
 ## 11. Домен без порта (из коробки)
 
-В этом проекте можно без внешнего reverse proxy:
-- `caddy` контейнер автоматически получает и обновляет сертификат Let's Encrypt
+В этом проекте можно без ручной настройки:
+- `install.sh` автоматически настраивает системный `nginx` как reverse proxy
+- `certbot` автоматически получает и обновляет сертификат Let's Encrypt
 - фронт и `/admin` доступны по `https://DOMAIN`
 
 Требования:

@@ -69,7 +69,7 @@ sh scripts/install.sh
 ```
 
 Если в `.env.docker` заданы `DOMAIN` и `LETSENCRYPT_EMAIL`,
-скрипт автоматически поднимет HTTPS через Let's Encrypt.
+скрипт автоматически настроит HTTPS через host nginx + Let's Encrypt.
 
 One-liner для VPS (curl | sh):
 
