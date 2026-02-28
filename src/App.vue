@@ -51,6 +51,7 @@ const sprintResults = ref<SprintResult[]>(loadSprintResults())
 const learningRecords = ref<LearningRecord[]>(loadLearningRecords())
 const examBank = ref<Exam[]>([])
 const userStats = ref<Array<{ user_name: string; attempts_count: number; best_score: number; avg_score: number }>>([])
+const dataLoadError = ref<string | null>(null)
 
 const activeExam = ref<Exam | null>(null)
 const questionIndex = ref(0)
@@ -235,7 +236,7 @@ const answerLearningQuestion = (optionId: string): void => {
   }
 
   const record: LearningRecord = {
-    id: crypto.randomUUID(),
+    id: createId(),
     attemptId: `learning-${Date.now()}`,
     questionId: currentLearningQuestion.value.questionId,
     topic: currentLearningQuestion.value.topic,
@@ -282,17 +283,38 @@ const completeOnboarding = (): void => {
 }
 
 const loadBackendData = async (): Promise<void> => {
+  dataLoadError.value = null
+
   try {
-    const [remoteExams, remoteAttempts, remoteStats] = await Promise.all([
-      fetchExams(),
-      fetchAttempts(),
-      fetchUserStats(),
-    ])
+    const remoteExams = await fetchExams()
     examBank.value = remoteExams
-    attempts.value = remoteAttempts
-    userStats.value = remoteStats
   } catch {
-    examBank.value = import.meta.env.DEV ? seedExams : []
+    const useSeedInDev = import.meta.env.DEV && import.meta.env.VITE_USE_SEED_EXAMS === '1'
+    examBank.value = useSeedInDev ? seedExams : []
+    attempts.value = []
+    userStats.value = []
+    dataLoadError.value = useSeedInDev
+      ? 'Не удалось загрузить экзамены из API. Включены локальные заглушки (VITE_USE_SEED_EXAMS=1).'
+      : 'Не удалось загрузить экзамены из API. Проверьте backend (/api).'
+    return
+  }
+
+  const [remoteAttempts, remoteStats] = await Promise.allSettled([fetchAttempts(), fetchUserStats()])
+
+  if (remoteAttempts.status === 'fulfilled') {
+    attempts.value = remoteAttempts.value
+  } else {
+    attempts.value = []
+    dataLoadError.value = 'Экзамены загружены, но статистика попыток сейчас недоступна.'
+  }
+
+  if (remoteStats.status === 'fulfilled') {
+    userStats.value = remoteStats.value
+  } else {
+    userStats.value = []
+    if (!dataLoadError.value) {
+      dataLoadError.value = 'Экзамены загружены, но статистика пользователей сейчас недоступна.'
+    }
   }
 }
 
@@ -320,6 +342,14 @@ const shuffle = <T>(items: T[]): T[] => {
     copy[j] = current
   }
   return copy
+}
+
+const createId = (): string => {
+  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+    return crypto.randomUUID()
+  }
+
+  return `${Date.now()}-${Math.random().toString(16).slice(2)}`
 }
 
 const getExamStats = (examId: string) => {
@@ -439,7 +469,7 @@ const finishExam = async (): Promise<void> => {
         const question = questionById.get(review.question_id)
         const selectedOptionId = review.selected_option_id ? String(review.selected_option_id) : ''
         return {
-          id: crypto.randomUUID(),
+          id: createId(),
           attemptId: String(result.attempt.id),
           questionId: String(review.question_id),
           topic: review.topic,
@@ -485,7 +515,7 @@ const finishExam = async (): Promise<void> => {
     }, 0)
     const score = Math.round((correct / exam.questions.length) * 100)
     const attempt: Attempt = {
-      id: crypto.randomUUID(),
+      id: createId(),
       examId: exam.id,
       examTitle: exam.title,
       userName: userName.value.trim() || 'Student',
@@ -595,7 +625,7 @@ const finishSprint = (): void => {
   sprintActive.value = false
 
   const result: SprintResult = {
-    id: crypto.randomUUID(),
+    id: createId(),
     userName: userName.value.trim() || 'Student',
     score: sprintScore.value,
     total: sprintAnswered.value,
@@ -764,6 +794,7 @@ onBeforeUnmount(() => {
 
       <div class="catalog-toolbar card">
         <h2>Каталог экзаменов</h2>
+        <p v-if="dataLoadError" class="error">{{ dataLoadError }}</p>
         <div class="chips">
           <button
             v-for="subject in subjects"
