@@ -68,6 +68,9 @@ Linux / Ubuntu:
 sh scripts/install.sh
 ```
 
+Если в `.env.docker` заданы `DOMAIN` и `LETSENCRYPT_EMAIL`,
+скрипт автоматически поднимет HTTPS через Let's Encrypt.
+
 One-liner для VPS (curl | sh):
 
 ```bash
@@ -86,6 +89,9 @@ powershell -ExecutionPolicy Bypass -File .\scripts\install.ps1
 cp .env.docker.example .env.docker
 docker compose -p pet-exam up -d --build
 ```
+
+Важно: переменные публикации порта (`APP_BIND_IP`, `APP_PORT`) берутся из `.env`
+(файл генерируется скриптом `install.sh` автоматически из `.env.docker`).
 
 ## Конфиг БД
 

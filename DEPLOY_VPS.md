@@ -59,6 +59,10 @@ nano .env.docker
 - `CORS_ALLOWED_ORIGINS`
 - `APP_PORT` (уникальный порт для этого проекта)
 
+Для автоматического HTTPS (Let's Encrypt) дополнительно укажи:
+- `DOMAIN` (например `grade.alwaysinit.ru`)
+- `LETSENCRYPT_EMAIL` (твой email для LE)
+
 Пример без конфликтов:
 - проект A: `APP_PORT=18080`
 - проект B: `APP_PORT=18081`
@@ -71,6 +75,11 @@ nano .env.docker
 ```bash
 sh scripts/install.sh
 ```
+
+Что делает `install.sh`:
+- создает `.env.docker` из шаблона при первом запуске
+- синхронизирует переменные `APP_BIND_IP/APP_PORT/DOMAIN/LETSENCRYPT_EMAIL` в `.env` для `docker compose`
+- при наличии `DOMAIN` + `LETSENCRYPT_EMAIL` включает профиль `https` (Caddy + Let's Encrypt)
 
 One-liner вариант (`curl | sh`):
 
@@ -109,6 +118,10 @@ docker compose -p pet-exam exec backend python manage.py createsuperuser
 - Админка: `http://SERVER_IP:APP_PORT/admin/`
 - API: `http://SERVER_IP:APP_PORT/api/`
 
+Если настроены `DOMAIN` и `LETSENCRYPT_EMAIL`, используй:
+- `https://DOMAIN`
+- `https://DOMAIN/admin/`
+
 ## 8. Обновление приложения
 
 ```bash
@@ -137,41 +150,13 @@ cp backend/db.sqlite3 backup_$(date +%F_%H-%M).sqlite3
 3. Отдельная директория проекта (`~/apps/<project>`).
 4. Отдельный `.env.docker` для каждого проекта.
 
-## 11. (Опционально) домен + reverse proxy
+## 11. Домен без порта (из коробки)
 
-Если на сервере уже есть общий Nginx/Caddy/Traefik:
-- публикуй этот проект только на `127.0.0.1:APP_PORT`
-- внешний прокси направляй на этот локальный порт
-- для HTTPS используй certbot/caddy/traefik
+В этом проекте можно без внешнего reverse proxy:
+- `caddy` контейнер автоматически получает и обновляет сертификат Let's Encrypt
+- фронт и `/admin` доступны по `https://DOMAIN`
 
-Тогда все проекты живут параллельно на одном сервере и не мешают друг другу.
-
-### Пример: поддомен без порта в URL
-
-Нужно, чтобы пользователи открывали просто `https://exam.example.com` (без `:18080`):
-
-1. В `.env.docker` оставь:
-   - `APP_BIND_IP=127.0.0.1`
-   - `APP_PORT=18080` (любой свободный внутренний порт)
-2. На хосте настрой внешний Nginx:
-
-```nginx
-server {
-    listen 80;
-    server_name exam.example.com;
-
-    location / {
-        proxy_pass http://127.0.0.1:18080;
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-    }
-}
-```
-
-3. После этого добавь HTTPS (certbot/caddy/traefik).
-
-Важно:
-- `5173` — это только dev-порт Vite для локальной разработки.
-- Для коллег используй URL домена, который смотрит на reverse proxy.
+Требования:
+- DNS `A/AAAA` для `DOMAIN` указывает на VPS
+- на сервере открыты порты `80` и `443`
+- в `.env.docker` заполнены `DOMAIN` и `LETSENCRYPT_EMAIL`
