@@ -506,15 +506,15 @@ const finishExam = async (): Promise<void> => {
     if (hasLocalCorrectAnswers) {
       const reviewItems = exam.questions.map((question, index) => {
         const selectedId = answers.value[question.id]
-        const selectedText = question.options.find((option) => option.id === selectedId)?.text ?? 'Не выбран'
+        const selectedText = question.options.find((option) => option.id === selectedId)?.text ?? 'пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ'
         const correctText =
-          question.options.find((option) => option.id === question.correctOptionId)?.text ?? 'Не задан'
+          question.options.find((option) => option.id === question.correctOptionId)?.text ?? 'пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ'
         return {
           questionNumber: index + 1,
           questionId: question.id,
           topic: question.topic,
           prompt: question.prompt,
-          explanation: question.explanation ?? `Верный вариант: ${correctText}`,
+          explanation: question.explanation ?? `пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ: ${correctText}`,
           scoreValue: question.scoreValue ?? 1,
           selectedText,
           correctText,
@@ -630,25 +630,25 @@ onBeforeUnmount(() => {
     <section v-if="!onboardingDone" class="onboarding-wrap">
       <article class="card onboarding-card">
         <div class="onboarding-top">
-          <h1>Добро пожаловать</h1>
+          <h1>пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ</h1>
         </div>
-        <p class="lead">Перед началом укажи имя и ознакомься с правилами прохождения тестов.</p>
+        <p class="lead">пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ.</p>
         <label class="username-field">
-          Как вас зовут
-          <input v-model="onboardingName" type="text" maxlength="30" placeholder="Например, Анна" />
+          пїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
+          <input v-model="onboardingName" type="text" maxlength="30" placeholder="пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅ" />
         </label>
         <ul class="rules-list">
-          <li>У каждого теста есть таймер и порог прохождения.</li>
-          <li>После завершения вы увидите детальный разбор ответов.</li>
-          <li>Ошибки автоматически попадут в раздел обучения.</li>
-          <li>Результаты сохраняются локально в этом браузере.</li>
+          <li>пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ.</li>
+          <li>пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ.</li>
+          <li>пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ.</li>
+          <li>пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ.</li>
         </ul>
         <label class="accept-row">
           <input v-model="onboardingAccepted" type="checkbox" />
-          <span>Я ознакомился с правилами</span>
+          <span>пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ</span>
         </label>
         <button class="cta" :disabled="!onboardingName.trim() || !onboardingAccepted" @click="completeOnboarding">
-          Продолжить
+          пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
         </button>
       </article>
     </section>
@@ -656,61 +656,61 @@ onBeforeUnmount(() => {
     <div v-else>
     <div class="app-topbar">
       <span class="app-topbar-user">{{ userName }}</span>
-      <button @click="toggleTheme">{{ theme === 'dark' ? 'Светлая тема' : 'Темная тема' }}</button>
+      <button @click="toggleTheme">{{ theme === 'dark' ? 'пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ' : 'пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ' }}</button>
     </div>
     <section v-if="tab === 'catalog' && !activeExam && examReview" class="panel-stack">
       <article class="card result-page">
-        <h2>{{ examReview.examTitle }}: результаты</h2>
+        <h2>{{ examReview.examTitle }}: пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ</h2>
         <div class="result-overview">
           <div class="overview-item highlight">
-            <span>Скоринговый балл</span>
+            <span>пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ</span>
             <strong>{{ examReview.scoringPoints }} / {{ examReview.maxScoringPoints }}</strong>
           </div>
           <div class="overview-item">
-            <span>Счет</span>
+            <span>пїЅпїЅпїЅпїЅ</span>
             <strong>{{ examReview.attempt.score }}%</strong>
           </div>
           <div class="overview-item">
-            <span>Верных</span>
+            <span>пїЅпїЅпїЅпїЅпїЅпїЅ</span>
             <strong>{{ examReview.correctCount }}/{{ examReview.total }}</strong>
           </div>
           <div class="overview-item">
-            <span>Порог</span>
+            <span>пїЅпїЅпїЅпїЅпїЅ</span>
             <strong>{{ examReview.passingScore }}%</strong>
           </div>
           <div class="overview-item">
-            <span>Статус</span>
+            <span>пїЅпїЅпїЅпїЅпїЅпїЅ</span>
             <strong :class="{ success: examReview.attempt.score >= examReview.passingScore, fail: examReview.attempt.score < examReview.passingScore }">
-              {{ examReview.attempt.score >= examReview.passingScore ? 'Пройдено' : 'Не пройдено' }}
+              {{ examReview.attempt.score >= examReview.passingScore ? 'пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ' : 'пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ' }}
             </strong>
           </div>
           <div class="overview-item meta-item">
-            <span>Время</span>
+            <span>пїЅпїЅпїЅпїЅпїЅ</span>
             <strong>{{ formatSeconds(examReview.attempt.durationSeconds) }}</strong>
           </div>
           <div class="overview-item meta-item">
-            <span>Дата</span>
+            <span>пїЅпїЅпїЅпїЅ</span>
             <strong>{{ formatDate(examReview.attempt.finishedAt) }}</strong>
           </div>
         </div>
         <article class="recommend-card">
-          <h3>Рекомендации для самообразования</h3>
-          <p v-if="!weakTopics.length" class="muted">Ошибок нет. Попробуй усложненный тест или спринт-режим.</p>
+          <h3>пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ</h3>
+          <p v-if="!weakTopics.length" class="muted">пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ. пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ-пїЅпїЅпїЅпїЅпїЅ.</p>
           <ul v-else class="recommend-list">
             <li v-for="topic in weakTopics.slice(0, 3)" :key="topic.topic">
-              Тема <strong>{{ topic.topic }}</strong>: {{ topic.wrong }} ошибок. Рекомендуется пройти тренировку по ошибкам.
+              пїЅпїЅпїЅпїЅ <strong>{{ topic.topic }}</strong>: {{ topic.wrong }} пїЅпїЅпїЅпїЅпїЅпїЅ. пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ.
             </li>
           </ul>
         </article>
         <div class="review-filters">
-          <button :class="{ active: reviewFilter === 'all' }" @click="reviewFilter = 'all'">Все</button>
-          <button :class="{ active: reviewFilter === 'wrong' }" @click="reviewFilter = 'wrong'">Только ошибки</button>
-          <button :class="{ active: reviewFilter === 'correct' }" @click="reviewFilter = 'correct'">Только верные</button>
-          <button @click="expandedReviewIds = filteredReviewItems.map((item) => item.questionId)">Раскрыть все</button>
-          <button @click="expandedReviewIds = []">Свернуть все</button>
+          <button :class="{ active: reviewFilter === 'all' }" @click="reviewFilter = 'all'">пїЅпїЅпїЅ</button>
+          <button :class="{ active: reviewFilter === 'wrong' }" @click="reviewFilter = 'wrong'">пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ</button>
+          <button :class="{ active: reviewFilter === 'correct' }" @click="reviewFilter = 'correct'">пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ</button>
+          <button @click="expandedReviewIds = filteredReviewItems.map((item) => item.questionId)">пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ</button>
+          <button @click="expandedReviewIds = []">пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ</button>
         </div>
         <div class="review-list">
-          <p v-if="!filteredReviewItems.length" class="empty">По текущему фильтру вопросов нет.</p>
+          <p v-if="!filteredReviewItems.length" class="empty">пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ.</p>
           <article
             v-for="item in filteredReviewItems"
             :key="item.questionId"
@@ -719,51 +719,51 @@ onBeforeUnmount(() => {
           >
             <div class="review-head">
               <p class="question-index">
-                Вопрос {{ item.questionNumber }}
+                пїЅпїЅпїЅпїЅпїЅпїЅ {{ item.questionNumber }}
                 <span>{{ item.topic }}</span>
               </p>
               <div class="review-head-actions">
                 <span class="review-status" :class="{ correct: item.isCorrect, wrong: !item.isCorrect }">
-                  {{ item.isCorrect ? 'Верно' : 'Ошибка' }}
+                  {{ item.isCorrect ? 'пїЅпїЅпїЅпїЅпїЅ' : 'пїЅпїЅпїЅпїЅпїЅпїЅ' }}
                 </span>
                 <button class="review-toggle" @click="toggleReviewItem(item.questionId)">
-                  {{ isExpanded(item.questionId) ? 'Скрыть' : 'Показать' }}
+                  {{ isExpanded(item.questionId) ? 'пїЅпїЅпїЅпїЅпїЅпїЅ' : 'пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ' }}
                 </button>
               </div>
             </div>
             <h3>{{ item.prompt }}</h3>
             <div v-if="isExpanded(item.questionId)" class="answer-stack">
               <div class="answer-line correct">
-                <span>Правильный:</span>
+                <span>пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ:</span>
                 <strong>{{ item.correctText }}</strong>
               </div>
               <div class="answer-line" :class="{ wrong: !item.isCorrect }">
-                <span>Ваш ответ:</span>
+                <span>пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ:</span>
                 <strong>{{ item.selectedText }}</strong>
               </div>
               <div class="explanation-box">
-                <span>Пояснение</span>
+                <span>пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ</span>
                 <p>{{ item.explanation }}</p>
-                <small>Баллы за вопрос: {{ item.scoreValue }}</small>
+                <small>пїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ: {{ item.scoreValue }}</small>
               </div>
             </div>
           </article>
         </div>
       </article>
-      <button class="cta result-back-btn" @click="examReview = null">Обратно к тестам</button>
+      <button class="cta result-back-btn" @click="examReview = null">пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅ</button>
     </section>
 
     <section v-if="tab === 'catalog' && !activeExam && !examReview" class="panel-stack">
       <article v-if="lastAttempt" class="card result-card">
-        <h2>{{ lastAttempt.examTitle }} завершен</h2>
+        <h2>{{ lastAttempt.examTitle }} пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ</h2>
         <p class="result-score" :class="{ success: lastAttempt.score >= 70 }">{{ lastAttempt.score }}%</p>
         <p>
-          Время: {{ formatSeconds(lastAttempt.durationSeconds) }} · Дата: {{ formatDate(lastAttempt.finishedAt) }}
+          пїЅпїЅпїЅпїЅпїЅ: {{ formatSeconds(lastAttempt.durationSeconds) }} пїЅ пїЅпїЅпїЅпїЅ: {{ formatDate(lastAttempt.finishedAt) }}
         </p>
       </article>
 
       <div class="catalog-toolbar card">
-        <h2>Каталог экзаменов</h2>
+        <h2>пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ</h2>
         <div class="chips">
           <button
             v-for="subject in subjects"
@@ -771,7 +771,7 @@ onBeforeUnmount(() => {
             :class="{ active: selectedSubject === subject }"
             @click="selectedSubject = subject"
           >
-            {{ subject === 'all' ? 'Все направления' : subject }}
+            {{ subject === 'all' ? 'пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ' : subject }}
           </button>
         </div>
       </div>
@@ -780,32 +780,32 @@ onBeforeUnmount(() => {
         <article v-for="exam in filteredExams" :key="exam.id" class="card exam-card">
           <div class="exam-meta">
             <span class="subject-pill" :style="getSubjectBadgeStyle(exam)">{{ exam.subject }}</span>
-            <span>{{ exam.durationMinutes }} мин</span>
+            <span>{{ exam.durationMinutes }} пїЅпїЅпїЅ</span>
           </div>
           <h3>{{ exam.title }}</h3>
           <p>{{ exam.description }}</p>
           <div class="exam-stats">
             <div class="exam-stat">
-              <span>Вопросов</span>
+              <span>пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ</span>
               <strong>{{ exam.questions.length }}</strong>
             </div>
             <div class="exam-stat">
-              <span>Порог</span>
+              <span>пїЅпїЅпїЅпїЅпїЅ</span>
               <strong>{{ exam.passingScore }}%</strong>
             </div>
             <div class="exam-stat">
-              <span>Рекорд</span>
+              <span>пїЅпїЅпїЅпїЅпїЅпїЅ</span>
               <strong>{{ getExamStats(exam.id).best }}%</strong>
             </div>
           </div>
           <button class="cta" :disabled="exam.questions.length === 0" @click="startExam(exam)">
-            {{ exam.questions.length === 0 ? 'Нет готовых вопросов' : 'Начать' }}
+            {{ exam.questions.length === 0 ? 'пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ' : 'пїЅпїЅпїЅпїЅпїЅпїЅ' }}
           </button>
         </article>
       </div>
 
       <article class="card history-card">
-        <h2>Последние попытки</h2>
+        <h2>пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ</h2>
         <div v-if="attempts.length" class="history-list">
           <div v-for="attempt in attempts.slice(0, 6)" :key="attempt.id" class="history-item">
             <span>{{ attempt.examTitle }}</span>
@@ -814,7 +814,7 @@ onBeforeUnmount(() => {
             <time>{{ formatDate(attempt.finishedAt) }}</time>
           </div>
         </div>
-        <p v-else class="empty">Пока нет попыток.</p>
+        <p v-else class="empty">пїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ.</p>
       </article>
     </section>
 
@@ -823,7 +823,7 @@ onBeforeUnmount(() => {
         <div class="session-layout">
           <div v-if="currentQuestion" :key="currentQuestion.id" class="question-block">
             <p class="question-index">
-              Вопрос {{ questionIndex + 1 }} / {{ activeExam.questions.length }}
+              пїЅпїЅпїЅпїЅпїЅпїЅ {{ questionIndex + 1 }} / {{ activeExam.questions.length }}
               <span>{{ currentQuestion.topic }}</span>
             </p>
             <h3>{{ currentQuestion.prompt }}</h3>
@@ -845,11 +845,11 @@ onBeforeUnmount(() => {
             <div class="timer">{{ formatSeconds(examTimeLeft) }}</div>
 
             <div class="progress-row">
-              <span>Прогресс</span>
+              <span>пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ</span>
               <strong>{{ progress }}%</strong>
             </div>
             <div class="progress-row">
-              <span>Ответы</span>
+              <span>пїЅпїЅпїЅпїЅпїЅпїЅ</span>
               <strong>{{ committedAnsweredCount }}/{{ activeExam.questions.length }}</strong>
             </div>
             <div class="progress-track">
@@ -857,14 +857,14 @@ onBeforeUnmount(() => {
             </div>
 
             <div class="session-actions">
-              <button :disabled="questionIndex === 0" @click="previousQuestion">Назад</button>
+              <button :disabled="questionIndex === 0" @click="previousQuestion">пїЅпїЅпїЅпїЅпїЅ</button>
               <button
                 v-if="questionIndex < activeExam.questions.length - 1"
                 :disabled="!currentQuestion || answers[currentQuestion.id] == null"
                 class="cta"
                 @click="nextQuestion"
               >
-                Далее
+                пїЅпїЅпїЅпїЅпїЅ
               </button>
               <button
                 v-else
@@ -872,28 +872,28 @@ onBeforeUnmount(() => {
                 class="cta"
                 @click="finishExam"
               >
-                Завершить
+                пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
               </button>
             </div>
           </aside>
         </div>
       </article>
-      <button class="cancel-link" @click="cancelExam">Отмена</button>
+      <button class="cancel-link" @click="cancelExam">пїЅпїЅпїЅпїЅпїЅпїЅ</button>
     </section>
 
     <section v-if="tab === 'learning' && !activeExam" class="panel-stack">
       <article class="card learning-card">
-        <h2>Тренировка по ошибкам</h2>
+        <h2>пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ</h2>
         <p class="muted">
-          В пуле для тренировки: <strong>{{ learningErrorPool.length }}</strong> вопросов из прошлых попыток.
+          пїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ: <strong>{{ learningErrorPool.length }}</strong> пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ.
         </p>
-        <button class="cta" :disabled="!learningErrorPool.length" @click="startLearningByErrors">Начать тренировку</button>
+        <button class="cta" :disabled="!learningErrorPool.length" @click="startLearningByErrors">пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ</button>
       </article>
 
       <article v-if="learningQueue.length" class="card learning-card">
         <div v-if="!learningFinished && currentLearningQuestion">
           <p class="question-index">
-            Тренировка: {{ learningIndex + 1 }} / {{ learningQueue.length }}
+            пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ: {{ learningIndex + 1 }} / {{ learningQueue.length }}
             <span>{{ currentLearningQuestion.topic }}</span>
           </p>
           <h3>{{ currentLearningQuestion.prompt }}</h3>
@@ -914,17 +914,17 @@ onBeforeUnmount(() => {
             </button>
           </div>
           <div class="editor-actions">
-            <button class="cta" :disabled="!learningSelectedOptionId" @click="nextLearningQuestion">Дальше</button>
+            <button class="cta" :disabled="!learningSelectedOptionId" @click="nextLearningQuestion">пїЅпїЅпїЅпїЅпїЅпїЅ</button>
           </div>
         </div>
 
         <div v-else class="learning-summary">
-          <h3>Тренировка завершена</h3>
+          <h3>пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ</h3>
           <p>
-            Верно: <strong>{{ learningCorrect }}</strong> из <strong>{{ learningAnswered }}</strong>
+            пїЅпїЅпїЅпїЅпїЅ: <strong>{{ learningCorrect }}</strong> пїЅпїЅ <strong>{{ learningAnswered }}</strong>
           </p>
           <button class="cta" :disabled="!learningErrorPool.length" @click="startLearningByErrors">
-            Пройти заново
+            пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ
           </button>
         </div>
       </article>
@@ -932,13 +932,13 @@ onBeforeUnmount(() => {
 
     <section v-if="tab === 'leaderboard' && !activeExam" class="panel-stack">
       <article class="card">
-        <h2>Лидерборд участников</h2>
+        <h2>пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ</h2>
         <div v-if="leaderboard.length" class="leaderboard">
           <div class="leaderboard-head">
-            <span>Участник</span>
+            <span>пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ</span>
             <span>Best</span>
             <span>Avg</span>
-            <span>Попыток</span>
+            <span>пїЅпїЅпїЅпїЅпїЅпїЅпїЅ</span>
           </div>
           <div v-for="entry in leaderboard" :key="entry.name" class="leaderboard-row">
             <span>{{ entry.name }}</span>
@@ -947,20 +947,20 @@ onBeforeUnmount(() => {
             <span>{{ entry.attempts }}</span>
           </div>
         </div>
-        <p v-else class="empty">Пока пусто.</p>
+        <p v-else class="empty">пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ.</p>
       </article>
     </section>
 
     <section v-if="tab === 'sprint' && !activeExam" class="panel-stack">
       <article class="card sprint-card">
-        <h2>Спринт на 60 секунд</h2>
+        <h2>пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ 60 пїЅпїЅпїЅпїЅпїЅпїЅ</h2>
         <div class="sprint-meta">
           <strong>{{ formatSeconds(sprintTimeLeft) }}</strong>
-          <span>Счет: {{ sprintScore }} / {{ sprintAnswered }}</span>
+          <span>пїЅпїЅпїЅпїЅ: {{ sprintScore }} / {{ sprintAnswered }}</span>
         </div>
 
-        <button v-if="!sprintActive" class="cta" :disabled="!allQuestions.length" @click="startSprint">Старт</button>
-        <button v-else @click="finishSprint">Завершить</button>
+        <button v-if="!sprintActive" class="cta" :disabled="!allQuestions.length" @click="startSprint">пїЅпїЅпїЅпїЅпїЅ</button>
+        <button v-else @click="finishSprint">пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ</button>
 
         <div v-if="sprintActive && sprintQuestion" class="sprint-question">
           <p class="question-index">{{ sprintQuestion.topic }}</p>
@@ -974,7 +974,7 @@ onBeforeUnmount(() => {
       </article>
 
       <article class="card history-card">
-        <h2>Топ спринтов</h2>
+        <h2>пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ</h2>
         <div v-if="topSprintResults.length" class="history-list">
           <div v-for="item in topSprintResults" :key="item.id" class="history-item">
             <span>{{ item.userName }}</span>
@@ -983,7 +983,7 @@ onBeforeUnmount(() => {
             <time>{{ formatDate(item.finishedAt) }}</time>
           </div>
         </div>
-        <p v-else class="empty">Результатов пока нет.</p>
+        <p v-else class="empty">пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅ.</p>
       </article>
     </section>
     </div>
