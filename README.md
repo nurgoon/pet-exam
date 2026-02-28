@@ -71,7 +71,7 @@ sh scripts/install.sh
 One-liner для VPS (curl | sh):
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/nurgoon/pet-exam/main/scripts/bootstrap.sh | REPO_URL=https://github.com/nurgoon/pet-exam.git BRANCH=main APP_DIR=$HOME/apps/pet-exam sh
+curl -fsSL <RAW_BOOTSTRAP_URL> | REPO_URL=https://github.com/<user>/<repo>.git BRANCH=main APP_DIR=$HOME/apps/pet-exam sh
 ```
 
 Windows PowerShell:
