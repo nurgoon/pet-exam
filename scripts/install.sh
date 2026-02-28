@@ -25,6 +25,10 @@ if [ ! -f "$ENV_FILE" ]; then
   echo "Created $ENV_FILE from $ENV_EXAMPLE"
 fi
 
+if [ ! -f "./backend/db.sqlite3" ]; then
+  touch "./backend/db.sqlite3"
+fi
+
 set -a
 . "./$ENV_FILE"
 set +a

@@ -17,6 +17,10 @@ if (-not (Test-Path $envFile)) {
   Write-Host "Created $envFile from $envExample"
 }
 
+if (-not (Test-Path 'backend/db.sqlite3')) {
+  New-Item -ItemType File -Path 'backend/db.sqlite3' -Force | Out-Null
+}
+
 $composeVersion = docker compose version 2>$null
 if (-not $composeVersion) {
   throw 'docker compose plugin is not installed.'
