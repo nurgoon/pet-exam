@@ -292,7 +292,7 @@ const loadBackendData = async (): Promise<void> => {
     attempts.value = remoteAttempts
     userStats.value = remoteStats
   } catch {
-    examBank.value = seedExams
+    examBank.value = import.meta.env.DEV ? seedExams : []
   }
 }
 
@@ -868,7 +868,7 @@ onBeforeUnmount(() => {
               </button>
               <button
                 v-else
-                :disabled="!currentQuestion || !answers[currentQuestion.id]"
+                :disabled="!currentQuestion"
                 class="cta"
                 @click="finishExam"
               >
