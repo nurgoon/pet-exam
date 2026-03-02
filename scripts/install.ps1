@@ -48,5 +48,5 @@ Write-Host "Starting containers (project: $projectName)..."
 docker compose --env-file $envFile -p $projectName up -d --build
 
 Write-Host 'Done.'
-Write-Host "Application: http://$appBindIp:$appPort"
-Write-Host "Admin: http://$appBindIp:$appPort/admin/"
+Write-Host "Application: http://${appBindIp}:${appPort}"
+Write-Host "Admin: http://${appBindIp}:${appPort}/admin/"
