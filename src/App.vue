@@ -1,6 +1,5 @@
 ﻿<script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
-import { exams as seedExams } from './data/exams'
 import {
   loadLearningRecords,
   loadSprintResults,
@@ -8,6 +7,7 @@ import {
   saveSprintResult,
 } from './lib/storage'
 import { fetchAttempts, fetchExams, fetchUserStats, submitAttempt } from './lib/api'
+import { exams as seedExams } from './data/exams'
 import type { Attempt, Exam, ExamQuestion, LearningRecord, SprintResult } from './types'
 
 type Tab = 'catalog' | 'leaderboard' | 'sprint' | 'learning'
@@ -62,6 +62,7 @@ const lastAttempt = ref<Attempt | null>(null)
 const examReview = ref<ExamReview | null>(null)
 const reviewFilter = ref<ReviewFilter>('all')
 const expandedReviewIds = ref<string[]>([])
+const isFinishingExam = ref(false)
 const learningQueue = ref<LearningRecord[]>([])
 const learningIndex = ref(0)
 const learningSelectedOptionId = ref<string | null>(null)
@@ -188,6 +189,30 @@ const weakTopics = computed(() => {
   return Object.entries(grouped)
     .map(([topic, wrong]) => ({ topic, wrong }))
     .sort((a, b) => b.wrong - a.wrong)
+})
+
+const onboardingIcon = {
+  src: 'https://lftz25oez4aqbxpq.public.blob.vercel-storage.com/image-UcGo0Y7L4WfuBuX4pSAc1LnhyGgUlu.png',
+  alt: 'Onboarding icon',
+}
+
+const resultStatus = computed(() => {
+  if (!examReview.value) {
+    return null
+  }
+
+  const passed = examReview.value.attempt.score >= examReview.value.passingScore
+  return passed
+    ? {
+        label: 'Статус: Пройдено',
+        icon: 'https://lftz25oez4aqbxpq.public.blob.vercel-storage.com/image-BwtahaCLSoUOyWdITnlPCNiwzCLUdL.png',
+        tone: 'pass',
+      }
+    : {
+        label: 'Статус: Не пройдено',
+        icon: 'https://lftz25oez4aqbxpq.public.blob.vercel-storage.com/image-FSCFWX0DBeBr8jibfvCV3ikItvT0BX.png',
+        tone: 'fail',
+      }
 })
 
 const learningErrorPool = computed(() => {
@@ -369,6 +394,41 @@ const getSubjectBadgeStyle = (exam: Exam): Record<string, string> => {
   return { '--subject-color': color }
 }
 
+const subjectIcons: Record<string, { src: string; alt: string; source: string }> = {
+  Frontend: {
+    src: 'https://lftz25oez4aqbxpq.public.blob.vercel-storage.com/image-GNGLsMOruOXjdF1rtx2ajfpU3YzrIS.png',
+    alt: 'Code icon',
+    source: 'https://www.thiings.co/things/code',
+  },
+  Backend: {
+    src: 'https://lftz25oez4aqbxpq.public.blob.vercel-storage.com/image-rgJwkWTrzrocDwMgi5sD0jwpdnH5Ot.png',
+    alt: 'Database icon',
+    source: 'https://www.thiings.co/things/database-icon',
+  },
+  QA: {
+    src: 'https://lftz25oez4aqbxpq.public.blob.vercel-storage.com/image-Ugm39CKBkd5PT6FpJkgvrkeKQmGBfZ.png',
+    alt: 'Bug viewer icon',
+    source: 'https://www.thiings.co/things/bug-viewer',
+  },
+  Безопасность: {
+    src: 'https://lftz25oez4aqbxpq.public.blob.vercel-storage.com/image-5i9EDsbgEZk9k7NBeKt3ImNXkx0F66.png',
+    alt: 'Shield icon',
+    source: 'https://www.thiings.co/things/blue-shield',
+  },
+  Сервис: {
+    src: 'https://lftz25oez4aqbxpq.public.blob.vercel-storage.com/image-UcGo0Y7L4WfuBuX4pSAc1LnhyGgUlu.png',
+    alt: 'E-learning icon',
+    source: 'https://www.thiings.co/things/e-learning',
+  },
+  Операции: {
+    src: 'https://lftz25oez4aqbxpq.public.blob.vercel-storage.com/image-73pNGHJBFF75t0zRsAgQInW9DAM4vd.png',
+    alt: 'Bar chart icon',
+    source: 'https://www.thiings.co/things/bar-chart',
+  },
+}
+
+const getExamIcon = (exam: Exam) => subjectIcons[exam.subject]
+
 const startExam = (exam: Exam): void => {
   if (exam.questions.length === 0) {
     return
@@ -422,10 +482,11 @@ const previousQuestion = (): void => {
 }
 
 const finishExam = async (): Promise<void> => {
-  if (!activeExam.value || !examStartedAt.value) {
+  if (!activeExam.value || !examStartedAt.value || isFinishingExam.value) {
     return
   }
 
+  isFinishingExam.value = true
   clearInterval(examTimer)
 
   const exam = activeExam.value
@@ -575,6 +636,7 @@ const finishExam = async (): Promise<void> => {
   questionIndex.value = 0
   answers.value = {}
   examElapsedSeconds.value = 0
+  isFinishingExam.value = false
 }
 
 const nextSprintQuestion = (): void => {
@@ -660,6 +722,9 @@ onBeforeUnmount(() => {
     <section v-if="!onboardingDone" class="onboarding-wrap">
       <article class="card onboarding-card">
         <div class="onboarding-top">
+          <div class="onboarding-hero">
+            <img :src="onboardingIcon.src" :alt="onboardingIcon.alt" loading="lazy" />
+          </div>
           <h1>Добро пожаловать</h1>
         </div>
         <p class="lead">Перед началом укажи имя и ознакомься с правилами прохождения тестов.</p>
@@ -690,6 +755,10 @@ onBeforeUnmount(() => {
     </div>
     <section v-if="tab === 'catalog' && !activeExam && examReview" class="panel-stack">
       <article class="card result-page">
+        <div v-if="resultStatus" class="result-status-hero" :class="resultStatus.tone">
+          <img :src="resultStatus.icon" :alt="resultStatus.label" loading="lazy" />
+          <strong>{{ resultStatus.label }}</strong>
+        </div>
         <h2>{{ examReview.examTitle }}: результаты</h2>
         <div class="result-overview">
           <div class="overview-item highlight">
@@ -809,6 +878,9 @@ onBeforeUnmount(() => {
 
       <div class="exam-grid">
         <article v-for="exam in filteredExams" :key="exam.id" class="card exam-card">
+          <div v-if="getExamIcon(exam)" class="exam-icon-wrap">
+            <img class="exam-icon" :src="getExamIcon(exam)?.src" :alt="getExamIcon(exam)?.alt" loading="lazy" />
+          </div>
           <div class="exam-meta">
             <span class="subject-pill" :style="getSubjectBadgeStyle(exam)">{{ exam.subject }}</span>
             <span>{{ exam.durationMinutes }} мин</span>
@@ -1018,5 +1090,9 @@ onBeforeUnmount(() => {
       </article>
     </section>
     </div>
+    <footer class="app-footer">
+      3D icons by
+      <a href="https://www.thiings.co/things" target="_blank" rel="noopener noreferrer">thiings.co</a>
+    </footer>
   </div>
 </template>
