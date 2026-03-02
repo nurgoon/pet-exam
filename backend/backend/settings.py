@@ -101,11 +101,17 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_USE_MANIFEST = os.getenv('STATICFILES_USE_MANIFEST', '0') == '1'
 STORAGES = {
     'staticfiles': {
-        'BACKEND': 'whitenoise.storage.CompressedManifestStaticFilesStorage',
+        'BACKEND': (
+            'whitenoise.storage.CompressedManifestStaticFilesStorage'
+            if STATICFILES_USE_MANIFEST
+            else 'whitenoise.storage.CompressedStaticFilesStorage'
+        ),
     },
 }
+WHITENOISE_MANIFEST_STRICT = os.getenv('WHITENOISE_MANIFEST_STRICT', '0') == '1'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 cors_origins = os.getenv('CORS_ALLOWED_ORIGINS', 'http://localhost:5173,http://127.0.0.1:5173')
