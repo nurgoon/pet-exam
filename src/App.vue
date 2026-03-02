@@ -52,6 +52,7 @@ const learningRecords = ref<LearningRecord[]>(loadLearningRecords())
 const examBank = ref<Exam[]>([])
 const userStats = ref<Array<{ user_name: string; attempts_count: number; best_score: number; avg_score: number }>>([])
 const dataLoadError = ref<string | null>(null)
+const examSubmitError = ref<string | null>(null)
 
 const activeExam = ref<Exam | null>(null)
 const questionIndex = ref(0)
@@ -420,6 +421,11 @@ const subjectIcons: Record<string, { src: string; alt: string; source: string }>
     alt: 'E-learning icon',
     source: 'https://www.thiings.co/things/e-learning',
   },
+  Инфобез: {
+    src: 'https://lftz25oez4aqbxpq.public.blob.vercel-storage.com/image-5i9EDsbgEZk9k7NBeKt3ImNXkx0F66.png',
+    alt: 'Security icon',
+    source: 'https://www.thiings.co/things/blue-shield',
+  },
   Операции: {
     src: 'https://lftz25oez4aqbxpq.public.blob.vercel-storage.com/image-73pNGHJBFF75t0zRsAgQInW9DAM4vd.png',
     alt: 'Bar chart icon',
@@ -439,6 +445,7 @@ const startExam = (exam: Exam): void => {
   answers.value = {}
   examElapsedSeconds.value = 0
   examStartedAt.value = Date.now()
+  examSubmitError.value = null
   lastAttempt.value = null
   examReview.value = null
   reviewFilter.value = 'all'
@@ -458,6 +465,7 @@ const cancelExam = (): void => {
   questionIndex.value = 0
   answers.value = {}
   examElapsedSeconds.value = 0
+  examSubmitError.value = null
   clearInterval(examTimer)
 }
 
@@ -487,7 +495,9 @@ const finishExam = async (): Promise<void> => {
   }
 
   isFinishingExam.value = true
+  examSubmitError.value = null
   clearInterval(examTimer)
+  let shouldCloseSession = true
 
   const exam = activeExam.value
   const payloadAnswers = Object.entries(answers.value).reduce<Record<string, number>>((acc, [questionId, optionId]) => {
@@ -521,7 +531,11 @@ const finishExam = async (): Promise<void> => {
     }
 
     attempts.value = [attempt, ...attempts.value]
-    userStats.value = await fetchUserStats()
+    try {
+      userStats.value = await fetchUserStats()
+    } catch {
+      // Do not break exam submit flow if stats endpoint is temporarily unavailable.
+    }
     lastAttempt.value = attempt
 
     const questionById = new Map(exam.questions.map((question) => [Number(question.id), question]))
@@ -628,8 +642,14 @@ const finishExam = async (): Promise<void> => {
       const firstWrong = reviewItems.find((item) => !item.isCorrect)
       expandedReviewIds.value = firstWrong ? [firstWrong.questionId] : []
     } else {
-      examReview.value = null
+      examSubmitError.value = 'Не удалось отправить результаты в API. Проверь backend и нажми "Завершить" еще раз.'
+      shouldCloseSession = false
     }
+  }
+
+  if (!shouldCloseSession) {
+    isFinishingExam.value = false
+    return
   }
 
   activeExam.value = null
@@ -978,6 +998,7 @@ onBeforeUnmount(() => {
                 Завершить
               </button>
             </div>
+            <p v-if="examSubmitError" class="error">{{ examSubmitError }}</p>
           </aside>
         </div>
       </article>
