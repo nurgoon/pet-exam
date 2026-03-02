@@ -59,7 +59,8 @@ npm run dev
 
 ## Docker / VPS
 
-- Быстрый деплой на Ubuntu VPS: см. [DEPLOY_VPS.md](DEPLOY_VPS.md)
+- Быстрый деплой на Ubuntu VPS: см. [docs/DEPLOY_VPS.md](docs/DEPLOY_VPS.md)
+- Итог изменений финальной сборки: [docs/CHANGELOG_FINAL.md](docs/CHANGELOG_FINAL.md)
 - Запуск в одну команду:
 
 Linux / Ubuntu:
