@@ -29,6 +29,11 @@ if [ ! -f "./backend/db.sqlite3" ]; then
   touch "./backend/db.sqlite3"
 fi
 
+if [ -d "./backend/db.sqlite3" ]; then
+  echo "./backend/db.sqlite3 is a directory. Remove it and create a file before deploy." >&2
+  exit 1
+fi
+
 set -a
 . "./$ENV_FILE"
 set +a
