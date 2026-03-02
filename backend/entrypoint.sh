@@ -3,6 +3,12 @@ set -e
 
 python manage.py migrate --noinput
 
+if [ "${AUTO_SEED_EXAMS:-1}" = "1" ]; then
+  if ! python manage.py seed_exams; then
+    echo "WARNING: seed_exams failed, continuing startup." >&2
+  fi
+fi
+
 if [ "${DJANGO_COLLECTSTATIC:-1}" = "1" ]; then
   if ! python manage.py collectstatic --noinput; then
     if [ "${COLLECTSTATIC_STRICT:-0}" = "1" ]; then
