@@ -141,6 +141,9 @@ REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': [
         'rest_framework.renderers.JSONRenderer',
     ],
+    # Public API for SPA: disable SessionAuthentication to avoid CSRF 403 on POST /api/*
+    # when browser has admin session cookie on the same domain.
+    'DEFAULT_AUTHENTICATION_CLASSES': [],
 }
 
 JAZZMIN_SETTINGS = {
