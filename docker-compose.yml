@@ -5,7 +5,8 @@ services:
       dockerfile: Dockerfile
     restart: unless-stopped
     env_file:
-      - .env.docker
+      - path: .env.docker
+        required: false
     volumes:
       - ./backend/db.sqlite3:/app/db.sqlite3
     expose:
